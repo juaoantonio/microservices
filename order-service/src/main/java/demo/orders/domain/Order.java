@@ -47,14 +47,14 @@ public class Order {
     }
 
 
-    public void initPaymentProcess() {
-        this.orderStatus = OrderStatus.PROCESSING;
+    public void submit() {
+        this.orderStatus = OrderStatus.SUBMITTED;
         this.paymentStatus = OrderPaymentStatus.PAYMENT_PENDING;
         this.updatedAt = Instant.now();
     }
 
     public void confirmPayment() {
-        if (!(this.orderStatus == OrderStatus.PROCESSING && this.paymentStatus == OrderPaymentStatus.PAYMENT_PENDING)) {
+        if (!(this.orderStatus == OrderStatus.SUBMITTED && this.paymentStatus == OrderPaymentStatus.PAYMENT_PENDING)) {
             throw new IllegalStateException("Não é possível confirmar o pagamento de um pedido que ainda não iniciou o processo de pagamento");
         }
         this.paymentStatus = OrderPaymentStatus.PAYMENT_APPROVED;
@@ -70,7 +70,7 @@ public class Order {
     }
 
     public void completeOrder() {
-        if (!(this.orderStatus == OrderStatus.PROCESSING && this.paymentStatus == OrderPaymentStatus.PAYMENT_APPROVED)) {
+        if (!(this.orderStatus == OrderStatus.SUBMITTED && this.paymentStatus == OrderPaymentStatus.PAYMENT_APPROVED)) {
             throw new IllegalStateException("Não é possível completar um pedido que ainda não teve o pagamento aprovado");
         }
         this.orderStatus = OrderStatus.COMPLETED;
