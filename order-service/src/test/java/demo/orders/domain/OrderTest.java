@@ -65,7 +65,7 @@ class OrderTest {
     }
 
     @Test
-    @DisplayName("Deve enviar o pedido para processamento")
+    @DisplayName("Deve submeter o pedido para processamento")
     void test_4() {
         String customerId = UUID.randomUUID().toString();
         var order = Order.create(customerId, createDefaultOrderItems());
@@ -73,6 +73,18 @@ class OrderTest {
         order.submit();
         assertEquals(OrderStatus.SUBMITTED, order.getOrderStatus());
         assertEquals(OrderPaymentStatus.PAYMENT_PENDING, order.getPaymentStatus());
+    }
+
+    @Test
+    @DisplayName("Não deve submeter o pedido se o total for maior que zero")
+    void test_5() {
+        String customerId = UUID.randomUUID().toString();
+        var order = Order.create(customerId, List.of(OrderItem.create(UUID.randomUUID().toString(), 2, BigDecimal.valueOf(0.0))));
+
+        var exception = assertThrows(IllegalStateException.class, () -> {
+            order.submit();
+        });
+        assertEquals("Não é possível submeter um pedido com valor total igual ou menor que zero", exception.getMessage());
     }
 
     @Test

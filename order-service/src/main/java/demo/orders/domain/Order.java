@@ -48,6 +48,9 @@ public class Order {
 
 
     public void submit() {
+        if (this.getTotalValue().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalStateException("Não é possível submeter um pedido com valor total igual ou menor que zero");
+        }
         this.orderStatus = OrderStatus.SUBMITTED;
         this.paymentStatus = OrderPaymentStatus.PAYMENT_PENDING;
         this.updatedAt = Instant.now();
