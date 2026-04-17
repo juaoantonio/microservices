@@ -27,6 +27,7 @@ class OrderTest {
         assertEquals(customerId, order.getCustomerId());
         assertEquals(OrderStatus.CREATED, order.getOrderStatus());
         assertEquals(OrderPaymentStatus.PAYMENT_PENDING, order.getPaymentStatus());
+        assertEquals(OrderInventoryStatus.INVENTORY_PENDING, order.getInventoryStatus());
         assertNotNull(order.getId());
         assertNotNull(order.getCreatedAt());
         assertNotNull(order.getUpdatedAt());

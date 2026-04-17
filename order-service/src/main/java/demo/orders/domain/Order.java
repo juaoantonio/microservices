@@ -13,6 +13,7 @@ public class Order {
     @Getter private List<OrderItem> items;
     @Getter private OrderStatus orderStatus;
     @Getter private OrderPaymentStatus paymentStatus;
+    @Getter private OrderInventoryStatus inventoryStatus;
     @Getter private Instant createdAt;
     @Getter private Instant updatedAt;
 
@@ -20,13 +21,15 @@ public class Order {
             String customerId,
             List<OrderItem> items,
             OrderStatus orderStatus,
-            OrderPaymentStatus paymentStatus
+            OrderPaymentStatus paymentStatus,
+            OrderInventoryStatus inventoryStatus
     ) {
         this.id = UUID.randomUUID().toString();
         this.items = items;
         this.customerId = customerId;
         this.orderStatus = orderStatus;
         this.paymentStatus = paymentStatus;
+        this.inventoryStatus = inventoryStatus;
         this.createdAt = Instant.now();
         this.updatedAt = Instant.now();
     }
@@ -35,7 +38,7 @@ public class Order {
         if (items == null || items.isEmpty()) {
             throw new IllegalArgumentException("O pedido deve conter pelo menos um item");
         }
-        return new Order(customerId, items, OrderStatus.CREATED, OrderPaymentStatus.PAYMENT_PENDING);
+        return new Order(customerId, items, OrderStatus.CREATED, OrderPaymentStatus.PAYMENT_PENDING, OrderInventoryStatus.INVENTORY_PENDING);
     }
 
     public void addItems(List<OrderItem> items) {
@@ -53,6 +56,7 @@ public class Order {
         }
         this.orderStatus = OrderStatus.SUBMITTED;
         this.paymentStatus = OrderPaymentStatus.PAYMENT_PENDING;
+        this.inventoryStatus = OrderInventoryStatus.INVENTORY_PENDING;
         this.updatedAt = Instant.now();
     }
 
