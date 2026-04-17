@@ -116,33 +116,69 @@ class OrderTest {
         var newOrderItems = List.of(OrderItem.create(UUID.randomUUID().toString(), 2, BigDecimal.valueOf(10.0)));
 
         order.submit();
-        order.approvePayment();
         var exception = assertThrows(IllegalStateException.class, () -> {
             order.addItems(newOrderItems);
         });
         assertEquals("Não é possível adicionar items quando o pedido já foi submetido para processamento", exception.getMessage());
     }
 
+    @Test()
+    @DisplayName("Deve permitir aprovar o resultado do inventário após o pagamento ser aprovado")
+    void test_11() {
+        String customerId = UUID.randomUUID().toString();
+        var order = Order.create(customerId, createDefaultOrderItems());
+        order.submit();
+        order.approvePayment();
+        order.approveInventory();
+        assertEquals(OrderStatus.SUBMITTED, order.getOrderStatus());
+        assertEquals(PaymentResult.APPROVED, order.getPaymentStatus());
+        assertEquals(InventoryResult.APPROVED, order.getInventoryStatus());
+    }
+
     @Test
-    @DisplayName("Deve ser possível completar o pedido após o pagamento ser aprovado")
+    @DisplayName("Não deve permitir aprovar o resultado do inventário se o pagamento ainda não foi aprovado")
+    void test_12() {
+        String customerId = UUID.randomUUID().toString();
+        var order = Order.create(customerId, createDefaultOrderItems());
+        order.submit();
+        var exception = assertThrows(IllegalStateException.class, order::approveInventory);
+        assertEquals("Não é possível aprovar o resultado do inventário de um pedido que ainda não teve o pagamento aprovado", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Deve ser possível completar o pedido após o resultado do processamento do pagamento e do inventário serem aprovados")
     void test_9() {
         String customerId = UUID.randomUUID().toString();
         var order = Order.create(customerId, createDefaultOrderItems());
         order.submit();
         order.approvePayment();
+        order.approveInventory();
         order.completeOrder();
         assertEquals(OrderStatus.COMPLETED, order.getOrderStatus());
         assertEquals(PaymentResult.APPROVED, order.getPaymentStatus());
     }
 
     @Test
-    @DisplayName("Não deve ser possível completar o pedido se o pagamento ainda não foi aprovado")
+    @DisplayName("Não deve ser possível completar o pedido se o resultado do processamento do inventário ainda não foi aprovado")
+    void test_13() {
+        String customerId = UUID.randomUUID().toString();
+        var order = Order.create(customerId, createDefaultOrderItems());
+        order.submit();
+        order.approvePayment();
+        var exception = assertThrows(IllegalStateException.class, () -> {
+            order.completeOrder();
+        });
+        assertEquals("Não é possível completar um pedido que ainda não teve o resultado do inventário aprovado", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Não deve ser possível completar o pedido se o pedido ainda não foi submetido para processamento")
     void test_10() {
         String customerId = UUID.randomUUID().toString();
         var order = Order.create(customerId, createDefaultOrderItems());
         var exception = assertThrows(IllegalStateException.class, () -> {
             order.completeOrder();
         });
-        assertEquals("Não é possível completar um pedido que ainda não teve o pagamento aprovado", exception.getMessage());
+        assertEquals("Não é possível completar um pedido que ainda não foi submetido para processamento", exception.getMessage());
     }
 }

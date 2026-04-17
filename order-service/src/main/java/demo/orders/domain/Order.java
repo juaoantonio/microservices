@@ -77,10 +77,27 @@ public class Order {
     }
 
     public void completeOrder() {
-        if (!(this.orderStatus == OrderStatus.SUBMITTED && this.paymentStatus == PaymentResult.APPROVED)) {
+        if (this.orderStatus != OrderStatus.SUBMITTED) {
+            throw new IllegalStateException("Não é possível completar um pedido que ainda não foi submetido para processamento");
+        }
+        if (this.paymentStatus == PaymentResult.UNKNOWN) {
             throw new IllegalStateException("Não é possível completar um pedido que ainda não teve o pagamento aprovado");
         }
+        if (this.inventoryStatus == InventoryResult.UNKNOWN) {
+            throw new IllegalStateException("Não é possível completar um pedido que ainda não teve o resultado do inventário aprovado");
+        }
         this.orderStatus = OrderStatus.COMPLETED;
+        this.updatedAt = Instant.now();
+    }
+
+    public void approveInventory() {
+        if (!(this.orderStatus == OrderStatus.SUBMITTED)) {
+            throw new IllegalStateException("Não é possível aprovar o resultado do inventário de um pedido que ainda não foi submetido para processamento");
+        }
+        if (this.paymentStatus == PaymentResult.UNKNOWN) {
+            throw new IllegalStateException("Não é possível aprovar o resultado do inventário de um pedido que ainda não teve o pagamento aprovado");
+        }
+        this.inventoryStatus = InventoryResult.APPROVED;
         this.updatedAt = Instant.now();
     }
 }
