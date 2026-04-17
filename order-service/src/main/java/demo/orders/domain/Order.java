@@ -12,8 +12,8 @@ public class Order {
     @Getter private String customerId;
     @Getter private List<OrderItem> items;
     @Getter private OrderStatus orderStatus;
-    @Getter private OrderPaymentStatus paymentStatus;
-    @Getter private OrderInventoryStatus inventoryStatus;
+    @Getter private PaymentResult paymentStatus;
+    @Getter private InventoryResult inventoryStatus;
     @Getter private Instant createdAt;
     @Getter private Instant updatedAt;
 
@@ -21,8 +21,8 @@ public class Order {
             String customerId,
             List<OrderItem> items,
             OrderStatus orderStatus,
-            OrderPaymentStatus paymentStatus,
-            OrderInventoryStatus inventoryStatus
+            PaymentResult paymentStatus,
+            InventoryResult inventoryStatus
     ) {
         this.id = UUID.randomUUID().toString();
         this.items = items;
@@ -38,12 +38,12 @@ public class Order {
         if (items == null || items.isEmpty()) {
             throw new IllegalArgumentException("O pedido deve conter pelo menos um item");
         }
-        return new Order(customerId, items, OrderStatus.CREATED, OrderPaymentStatus.PAYMENT_PENDING, OrderInventoryStatus.INVENTORY_PENDING);
+        return new Order(customerId, items, OrderStatus.CREATED, PaymentResult.UNKNOWN, InventoryResult.UNKNOWN);
     }
 
     public void addItems(List<OrderItem> items) {
         if (!(this.orderStatus == OrderStatus.CREATED)) {
-            throw new IllegalStateException("Não é possível adicionar items quando o pedido já está em para processo de pagamento");
+            throw new IllegalStateException("Não é possível adicionar items quando o pedido já foi submetido para processamento");
         }
         this.items.addAll(items);
         this.updatedAt = Instant.now();
@@ -55,16 +55,16 @@ public class Order {
             throw new IllegalStateException("Não é possível submeter um pedido com valor total igual ou menor que zero");
         }
         this.orderStatus = OrderStatus.SUBMITTED;
-        this.paymentStatus = OrderPaymentStatus.PAYMENT_PENDING;
-        this.inventoryStatus = OrderInventoryStatus.INVENTORY_PENDING;
+        this.paymentStatus = PaymentResult.UNKNOWN;
+        this.inventoryStatus = InventoryResult.UNKNOWN;
         this.updatedAt = Instant.now();
     }
 
-    public void confirmPayment() {
-        if (!(this.orderStatus == OrderStatus.SUBMITTED && this.paymentStatus == OrderPaymentStatus.PAYMENT_PENDING)) {
-            throw new IllegalStateException("Não é possível confirmar o pagamento de um pedido que ainda não iniciou o processo de pagamento");
+    public void approvePayment() {
+        if (!(this.orderStatus == OrderStatus.SUBMITTED && this.paymentStatus == PaymentResult.UNKNOWN)) {
+            throw new IllegalStateException("Não é possível confirmar o pagamento de um pedido que ainda não foi submetido para processamento");
         }
-        this.paymentStatus = OrderPaymentStatus.PAYMENT_APPROVED;
+        this.paymentStatus = PaymentResult.APPROVED;
         this.updatedAt = Instant.now();
     }
 
@@ -77,7 +77,7 @@ public class Order {
     }
 
     public void completeOrder() {
-        if (!(this.orderStatus == OrderStatus.SUBMITTED && this.paymentStatus == OrderPaymentStatus.PAYMENT_APPROVED)) {
+        if (!(this.orderStatus == OrderStatus.SUBMITTED && this.paymentStatus == PaymentResult.APPROVED)) {
             throw new IllegalStateException("Não é possível completar um pedido que ainda não teve o pagamento aprovado");
         }
         this.orderStatus = OrderStatus.COMPLETED;

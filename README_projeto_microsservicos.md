@@ -113,6 +113,54 @@ exclusivamente por eventos.
 
 ------------------------------------------------------------------------
 
+## Resiliência e Falhas de Comunicação
+
+-   Nenhum serviço deve assumir que outro serviço está disponível no
+    momento do processamento.
+-   Falhas ao publicar ou consumir eventos devem ser tratadas com retry
+    controlado, backoff e limite máximo de tentativas.
+-   Mensagens que continuarem falhando após o limite de retries devem ser
+    enviadas para uma DLQ para análise e reprocessamento manual ou
+    automatizado.
+-   A indisponibilidade temporária de `Payment Service`, `Inventory
+    Service` ou `Notification Service` não deve bloquear a criação do
+    pedido; o fluxo deve continuar quando os eventos pendentes forem
+    processados.
+-   Timeouts, erros de broker e falhas de serialização devem gerar logs
+    com `orderId`, nome do evento e causa da falha.
+
+------------------------------------------------------------------------
+
+## Idempotência
+
+-   Todos os consumidores de eventos devem ser idempotentes.
+-   Cada evento deve possuir um identificador único (`eventId`) e dados de
+    correlação (`orderId`, `correlationId`).
+-   Eventos já processados não devem alterar novamente o estado do
+    agregado nem gerar novos eventos duplicados.
+-   Transições de estado devem validar o estado atual antes de aplicar a
+    mudança. Exemplo: `payment.approved` recebido duas vezes mantém o
+    pagamento aprovado sem repetir a confirmação de estoque.
+-   Reprocessamentos vindos da DLQ ou de retries devem produzir o mesmo
+    resultado de uma primeira execução bem-sucedida.
+
+------------------------------------------------------------------------
+
+## ACK, NACK e Reentrega
+
+-   Consumidores devem usar ACK manual quando a biblioteca/broker permitir.
+-   O ACK só deve ser enviado após a persistência local e a publicação de
+    eventos derivados terem sido concluídas com sucesso.
+-   Em erro transitório, o consumidor deve usar NACK/requeue ou mecanismo
+    equivalente para permitir nova tentativa.
+-   Em erro não recuperável, como payload inválido ou contrato
+    incompatível, a mensagem deve ser rejeitada sem requeue e direcionada
+    para DLQ.
+-   O sistema deve tolerar mensagens redelivered pelo broker, usando
+    idempotência para evitar efeitos colaterais duplicados.
+
+------------------------------------------------------------------------
+
 ## Estrutura sugerida
 
     /project-root
@@ -161,6 +209,18 @@ exclusivamente por eventos.
 
 -   sistema deve ser idempotente
 
+### Falha temporária no consumidor
+
+-   evento não confirmado com ACK
+-   broker reentrega a mensagem
+-   consumidor processa novamente sem duplicar efeitos
+
+### Falha permanente no payload
+
+-   consumidor rejeita a mensagem
+-   evento vai para DLQ
+-   erro fica rastreável por `eventId` e `orderId`
+
 ------------------------------------------------------------------------
 
 ## Boas práticas
@@ -168,8 +228,11 @@ exclusivamente por eventos.
 -   baixo acoplamento
 -   contratos de eventos bem definidos
 -   logs com `orderId`
+-   logs com `eventId` e `correlationId`
 -   separação de responsabilidades
 -   tratamento de falhas
+-   consumidores idempotentes
+-   ACK apenas após processamento completo
 
 ------------------------------------------------------------------------
 

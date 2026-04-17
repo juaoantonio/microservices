@@ -26,8 +26,8 @@ class OrderTest {
 
         assertEquals(customerId, order.getCustomerId());
         assertEquals(OrderStatus.CREATED, order.getOrderStatus());
-        assertEquals(OrderPaymentStatus.PAYMENT_PENDING, order.getPaymentStatus());
-        assertEquals(OrderInventoryStatus.INVENTORY_PENDING, order.getInventoryStatus());
+        assertEquals(PaymentResult.UNKNOWN, order.getPaymentStatus());
+        assertEquals(InventoryResult.UNKNOWN, order.getInventoryStatus());
         assertNotNull(order.getId());
         assertNotNull(order.getCreatedAt());
         assertNotNull(order.getUpdatedAt());
@@ -73,7 +73,7 @@ class OrderTest {
 
         order.submit();
         assertEquals(OrderStatus.SUBMITTED, order.getOrderStatus());
-        assertEquals(OrderPaymentStatus.PAYMENT_PENDING, order.getPaymentStatus());
+        assertEquals(PaymentResult.UNKNOWN, order.getPaymentStatus());
     }
 
     @Test
@@ -89,23 +89,23 @@ class OrderTest {
     }
 
     @Test
-    @DisplayName("Deve confirmar o pagamento do pedido após iniciar o processo de pagamento do pedido")
+    @DisplayName("Deve confirmar o pagamento do pedido após submeter o pedido para processamento")
     void test_6() {
         String customerId = UUID.randomUUID().toString();
         var order = Order.create(customerId,  createDefaultOrderItems());
         order.submit();
-        order.confirmPayment();
+        order.approvePayment();
         assertEquals(OrderStatus.SUBMITTED, order.getOrderStatus());
-        assertEquals(OrderPaymentStatus.PAYMENT_APPROVED, order.getPaymentStatus());
+        assertEquals(PaymentResult.APPROVED, order.getPaymentStatus());
     }
 
     @Test
-    @DisplayName("Não deve confirmar o pagamento de um pedido se o processo de pagamento ainda não foi iniciado")
+    @DisplayName("Não deve aprovar o pagamento de um pedido se pedido ainda não foi submetido para processamento")
     void test_7() {
         String customerId = UUID.randomUUID().toString();
         var order = Order.create(customerId, createDefaultOrderItems());
-        var exception = assertThrows(IllegalStateException.class, order::confirmPayment);
-        assertEquals("Não é possível confirmar o pagamento de um pedido que ainda não iniciou o processo de pagamento", exception.getMessage());
+        var exception = assertThrows(IllegalStateException.class, order::approvePayment);
+        assertEquals("Não é possível confirmar o pagamento de um pedido que ainda não foi submetido para processamento", exception.getMessage());
     }
 
     @Test
@@ -116,11 +116,11 @@ class OrderTest {
         var newOrderItems = List.of(OrderItem.create(UUID.randomUUID().toString(), 2, BigDecimal.valueOf(10.0)));
 
         order.submit();
-        order.confirmPayment();
+        order.approvePayment();
         var exception = assertThrows(IllegalStateException.class, () -> {
             order.addItems(newOrderItems);
         });
-        assertEquals("Não é possível adicionar items quando o pedido já está em para processo de pagamento", exception.getMessage());
+        assertEquals("Não é possível adicionar items quando o pedido já foi submetido para processamento", exception.getMessage());
     }
 
     @Test
@@ -129,10 +129,10 @@ class OrderTest {
         String customerId = UUID.randomUUID().toString();
         var order = Order.create(customerId, createDefaultOrderItems());
         order.submit();
-        order.confirmPayment();
+        order.approvePayment();
         order.completeOrder();
         assertEquals(OrderStatus.COMPLETED, order.getOrderStatus());
-        assertEquals(OrderPaymentStatus.PAYMENT_APPROVED, order.getPaymentStatus());
+        assertEquals(PaymentResult.APPROVED, order.getPaymentStatus());
     }
 
     @Test
