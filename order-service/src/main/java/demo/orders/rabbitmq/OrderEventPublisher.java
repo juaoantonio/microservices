@@ -1,8 +1,8 @@
 package demo.orders.rabbitmq;
 
-import demo.orders.domain.Order;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Service
 public class OrderEventPublisher {
@@ -12,7 +12,8 @@ public class OrderEventPublisher {
     this.rabbitTemplate = rabbitTemplate;
   }
 
-  public void publishOrderCreated(Order order) {
-    rabbitTemplate.convertAndSend(RabbitMQConfig.ORDERS_EXCHANGE, RabbitMQConfig.ORDER_CREATED_KEY, order);
+  @TransactionalEventListener
+  public void publishOrderCreatedEvent(OrderCreatedEvent orderCreatedEvent) {
+    rabbitTemplate.convertAndSend(RabbitMQConfig.ORDERS_EXCHANGE, RabbitMQConfig.ORDER_CREATED_KEY, orderCreatedEvent);
   }
 }
