@@ -1,10 +1,7 @@
 package demo.orders.application;
 
-import demo.orders.domain.IOrderRepository;
-import demo.orders.domain.OrderCreatedEvent;
+import demo.orders.domain.*;
 import demo.orders.dto.CreateOrderItemRequestDto;
-import demo.orders.domain.Order;
-import demo.orders.domain.OrderItem;
 import demo.orders.repository.JpaOrderRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CreateOrderUseCase {
   private final IOrderRepository orderRepository;
-  private final ApplicationEventPublisher eventPublisher;
+  private final IEventPublisher eventPublisher;
 
   @Transactional
   public Order createOrder(String customerId, List<CreateOrderItemRequestDto> orderItensDto) {

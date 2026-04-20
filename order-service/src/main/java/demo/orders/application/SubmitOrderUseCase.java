@@ -1,5 +1,6 @@
 package demo.orders.application;
 
+import demo.orders.domain.IEventPublisher;
 import demo.orders.domain.IOrderRepository;
 import demo.orders.domain.Order;
 import demo.orders.domain.OrderSubmittedEvent;
@@ -16,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class SubmitOrderUseCase {
   private final IOrderRepository orderRepository;
-  private final ApplicationEventPublisher eventPublisher;
+  private final IEventPublisher eventPublisher;
 
   @Transactional
   public Order submitOrder(String orderId) {

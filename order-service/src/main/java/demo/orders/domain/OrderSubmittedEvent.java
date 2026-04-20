@@ -7,7 +7,7 @@ public record OrderSubmittedEvent(
     String customerId,
     Instant createdAt,
     Instant updatedAt
-) {
+) implements IEvent {
   public static OrderSubmittedEvent from(Order order) {
     return new OrderSubmittedEvent(
         order.getId().toString(),

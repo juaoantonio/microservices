@@ -1,7 +1,8 @@
-package demo.orders.rabbitmq;
+package demo.orders.infra;
 
 import demo.orders.domain.OrderCreatedEvent;
 import demo.orders.domain.OrderSubmittedEvent;
+import demo.orders.rabbitmq.RabbitMQConfig;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.event.TransactionalEventListener;
