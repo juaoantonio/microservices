@@ -13,3 +13,7 @@ spring:
     host: localhost
     username: rabbitmq
     password: rabbitmq
+
+  jpa:
+    hibernate:
+      ddl-auto: update

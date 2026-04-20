@@ -26,8 +26,8 @@ class OrderTest {
 
         assertEquals(customerId, order.getCustomerId());
         assertEquals(OrderStatus.CREATED, order.getOrderStatus());
-        assertEquals(PaymentResult.UNKNOWN, order.getPaymentStatus());
-        assertEquals(InventoryResult.UNKNOWN, order.getInventoryStatus());
+        assertEquals(PaymentResult.UNKNOWN, order.getPaymentResult());
+        assertEquals(InventoryResult.UNKNOWN, order.getInventoryResult());
         assertNotNull(order.getId());
         assertNotNull(order.getCreatedAt());
         assertNotNull(order.getUpdatedAt());
@@ -73,7 +73,7 @@ class OrderTest {
 
         order.submit();
         assertEquals(OrderStatus.SUBMITTED, order.getOrderStatus());
-        assertEquals(PaymentResult.UNKNOWN, order.getPaymentStatus());
+        assertEquals(PaymentResult.UNKNOWN, order.getPaymentResult());
     }
 
     @Test
@@ -96,7 +96,7 @@ class OrderTest {
         order.submit();
         order.approvePayment();
         assertEquals(OrderStatus.SUBMITTED, order.getOrderStatus());
-        assertEquals(PaymentResult.APPROVED, order.getPaymentStatus());
+        assertEquals(PaymentResult.APPROVED, order.getPaymentResult());
     }
 
     @Test
@@ -131,8 +131,8 @@ class OrderTest {
         order.approvePayment();
         order.approveInventory();
         assertEquals(OrderStatus.SUBMITTED, order.getOrderStatus());
-        assertEquals(PaymentResult.APPROVED, order.getPaymentStatus());
-        assertEquals(InventoryResult.APPROVED, order.getInventoryStatus());
+        assertEquals(PaymentResult.APPROVED, order.getPaymentResult());
+        assertEquals(InventoryResult.APPROVED, order.getInventoryResult());
     }
 
     @Test
@@ -155,7 +155,7 @@ class OrderTest {
         order.approveInventory();
         order.completeOrder();
         assertEquals(OrderStatus.COMPLETED, order.getOrderStatus());
-        assertEquals(PaymentResult.APPROVED, order.getPaymentStatus());
+        assertEquals(PaymentResult.APPROVED, order.getPaymentResult());
     }
 
     @Test
