@@ -1,6 +1,5 @@
-package demo.orders.rabbitmq;
+package demo.orders.domain;
 
-import demo.orders.domain.Order;
 import java.time.Instant;
 
 public record OrderSubmittedEvent(

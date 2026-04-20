@@ -1,6 +1,4 @@
-package demo.orders.rabbitmq;
-
-import demo.orders.domain.Order;
+package demo.orders.domain;
 
 import java.time.Instant;
 

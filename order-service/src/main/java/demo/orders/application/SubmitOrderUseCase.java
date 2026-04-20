@@ -1,7 +1,7 @@
 package demo.orders.application;
 
 import demo.orders.domain.Order;
-import demo.orders.rabbitmq.OrderSubmittedEvent;
+import demo.orders.domain.OrderSubmittedEvent;
 import demo.orders.repository.OrderRepository;
 
 import java.util.UUID;

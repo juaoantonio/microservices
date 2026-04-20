@@ -1,7 +1,6 @@
 package demo.orders.application;
 
-import demo.orders.rabbitmq.OrderCreatedEvent;
-import demo.orders.rabbitmq.OrderEventPublisher;
+import demo.orders.domain.OrderCreatedEvent;
 import demo.orders.dto.CreateOrderItemRequestDto;
 import demo.orders.domain.Order;
 import demo.orders.domain.OrderItem;
