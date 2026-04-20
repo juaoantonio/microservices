@@ -17,13 +17,13 @@ public class CreateOrderUseCase {
   private final IEventPublisher eventPublisher;
 
   @Transactional
-  public Order createOrder(CreateOrderCommand command) {
+  public String createOrder(CreateOrderCommand command) {
     var items = command.items().stream()
             .map(item -> OrderItem.create(item.productId(), item.quantity(), item.price()))
             .toList();
     var order = Order.create(command.customerId(), items);
     var savedOrder = this.orderRepository.save(order);
     this.eventPublisher.publishEvent(OrderCreatedEvent.from(savedOrder));
-    return savedOrder;
+    return savedOrder.getId().toString();
   }
 }
