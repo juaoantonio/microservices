@@ -1,0 +1,29 @@
+package demo.orders.dto;
+
+import demo.orders.domain.Order;
+import java.util.List;
+
+public record SubmitOrderResponseDto(
+    String orderId,
+    String customerId,
+    String orderStatus,
+    String inventoryResult,
+    String paymentResult,
+    List<OrderItemResponseDto> items) {
+  public static SubmitOrderResponseDto from(Order order) {
+    var items =
+        order.getItems().stream()
+            .map(
+                item ->
+                    new OrderItemResponseDto(
+                        item.getProductId(), item.getQuantity(), item.getPrice()))
+            .toList();
+    return new SubmitOrderResponseDto(
+        order.getId().toString(),
+        order.getCustomerId(),
+        order.getOrderStatus().name(),
+        order.getInventoryResult().name(),
+        order.getPaymentResult().name(),
+        items);
+  }
+}

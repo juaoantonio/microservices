@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
   public static final String ORDERS_EXCHANGE = "orders.events";
   public static final String ORDER_CREATED_KEY = "order.created";
+  public static final String ORDER_SUBMITTED_KEY = "order.submitted";
 
   @Bean
   TopicExchange ordersExchange() {
