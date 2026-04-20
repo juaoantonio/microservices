@@ -24,7 +24,7 @@ public class OrderController {
 
   @PatchMapping("/{orderId}/submit")
   public ResponseEntity<SubmitOrderResponseDto> submitOrder(@PathVariable String orderId) {
-    this.submitOrderUseCase.submitOrder(orderId);
-    return ResponseEntity.ok().build();
+    var order= this.submitOrderUseCase.submitOrder(orderId);
+    return ResponseEntity.ok(SubmitOrderResponseDto.from(order));
   }
 }
