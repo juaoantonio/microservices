@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class OrderRepositoryJpa implements IOrderRepository {
-  private final JpaOrderRepository jpaOrderRepository;
+public class OrderRepositoryImpl implements IOrderRepository {
+  private final OrderJpaRepository jpaOrderRepository;
   private final OrderJpaEntityMapper orderJpaEntityMapper;
 
   @Override
