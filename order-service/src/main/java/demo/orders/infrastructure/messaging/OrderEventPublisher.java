@@ -22,6 +22,6 @@ public class OrderEventPublisher {
 
   @TransactionalEventListener
   public void publishOrderSubmitted(OrderSubmittedEvent order) {
-    rabbitTemplate.convertAndSend(RabbitMQConfig.ORDER_SUBMITTED_KEY, order);
+    rabbitTemplate.convertAndSend(RabbitMQConfig.ORDERS_EXCHANGE, RabbitMQConfig.ORDER_SUBMITTED_KEY, order);
   }
 }
