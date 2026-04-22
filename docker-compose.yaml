@@ -12,12 +12,13 @@ services:
       - ./docker/postgres/init:/docker-entrypoint-initdb.d
 
   rabbitmq:
-    image: 'rabbitmq:latest'
+    image: 'rabbitmq:4.2.5-management-alpine'
     environment:
       - 'RABBITMQ_DEFAULT_PASS=rabbitmq'
       - 'RABBITMQ_DEFAULT_USER=rabbitmq'
     ports:
       - '5672:5672'
+      - '15672:15672'
 
 volumes:
     postgres_data:
