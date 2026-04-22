@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: payment-service
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/payment_db
+    username: postgres
+    password: postgres
+
+  rabbitmq:
+    port: 5672
+    host: localhost
+    username: rabbitmq
+    password: rabbitmq
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8081
